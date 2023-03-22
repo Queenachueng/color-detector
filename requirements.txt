@@ -1,2 +1,2 @@
-flask
-Opencv
+Flask
+opencv-python
