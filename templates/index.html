@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Color Detector</title>
+    <style>
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .video-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60vh;
+        position: relative;
+      }
+      #still-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+      }
+      button[name="capture"] {
+        display: block;
+        margin: 0 auto;
+        font-size: 24px;
+        margin-top: 20px;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 50%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Color Detector</h1>
+      <p >Use rainbow-colored objects to detect colors. Click the "Capture" button and aim the object at the center of the black dot to recognize its color.</p>
+    </div>
+    <form method="POST">
+      <div class="video-container">
+        <img src="{{ url_for('video_feed') }}" width="640" height="360">
+        <canvas id="still-image" width="640" height="360"></canvas>
+        <button type="submit" name="capture">Capture</button>
+      </div>
+    </form>
+    <canvas id="color-canvas" width="640" height="360" style="display: none;"></canvas>
+    <script>
+      document.querySelector('form').addEventListener('submit', function(event) {
+        // Show the color canvas
+        document.querySelector('#color-canvas').style.display = 'block';
+  
+        // Disable the capture button to prevent multiple submissions
+        document.querySelector('button[name="capture"]').disabled = true;
+  
+        // Send the form data to the server using AJAX
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/');
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            // Draw the color text on the canvas
+            var canvas = document.querySelector('#color-canvas');
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas first
+            ctx.font = 'bold 48px sans-serif';
+            ctx.fillStyle = xhr.responseText;
+            ctx.fillText(xhr.responseText, canvas.width/2, canvas.height/2);
+          }
+  
+          // Re-enable the capture button
+          document.querySelector('button[name="capture"]').disabled = false;
+        };
+        xhr.send(new FormData(event.target));
+  
+        // Prevent the form from submitting normally
+        event.preventDefault();
+      });
+    </script>
+  </body>
+</html>
