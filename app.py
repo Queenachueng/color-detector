@@ -1,5 +1,11 @@
 import cv2
 import numpy as np
+from scipy.io import wavfile
+import sounddevice as sd
+import soundfile as sf
+import playsound
+import os
+import pygame
 from flask import Flask, render_template, Response, request
 
 app = Flask(__name__)
@@ -23,21 +29,30 @@ def detect_color(frame):
     hue_value = pixel_center[0]
 
     color = "Undefined"
+    sound_file = "/Users/zhangwanqian/Desktop/master/7353/group/color-detector/sound/"
     if hue_value < 5:
         color = "RED"
+        sound_file = sound_file + "red.wav"
     elif hue_value < 22:
         color = "ORANGE"
+        sound_file = sound_file + "orange.wav"
     elif hue_value < 33:
         color = "YELLOW"
+        sound_file = sound_file + "yellow.wav"
     elif hue_value < 78:
         color = "GREEN"
+        sound_file = sound_file + "green.wav"
     elif hue_value < 131:
         color = "BLUE"
+        sound_file = sound_file + "blue.wav"
     elif hue_value < 170:
         color = "VIOLET"
+        sound_file = sound_file + "violet.wav"
     else:
         color = "RED"
+        sound_file = sound_file + "red.wav"
 
+    playsound.playsound(sound=sound_file)
     return color
 
 
